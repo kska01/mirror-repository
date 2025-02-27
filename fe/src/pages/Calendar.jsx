@@ -6,13 +6,13 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 
+import mockApi from '../api/mockApi';
+
 export default function Calendar() {
   const navigate = useNavigate();
   const [category, setCategory] = useState('schedule');
 
-  const linkStyle =
-    'px-3 py-2 mr-2 rounded-lg text-gray-500 hover:bg-primary hover:text-white border';
-  const activeLinkStyle = 'text-primary';
+  const [eventList, setEventList] = useState([]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -21,20 +21,10 @@ export default function Calendar() {
     }
   }, []);
 
-  // TODO: 임시적인 일정 목록이므로, 실제 DB 연동 이후 수정 예정
-  const [tempEventList, setTempEventList] = useState([
-    { date: '2025-01-03', display: 'background', backgroundColor: 'red' },
-    { date: '2025-01-21', display: 'background', backgroundColor: 'blue' },
-    { date: '2025-02-11', display: 'background', backgroundColor: 'green' },
-    { date: '2025-02-12', display: 'background', backgroundColor: 'yellow' },
-    { date: '2025-02-22', display: 'background', backgroundColor: 'brown' },
-    { date: '2025-03-03', display: 'background', backgroundColor: 'grey' },
-    { date: '2025-03-05', display: 'background', backgroundColor: 'violet' },
-    { date: '2025-03-08', display: 'background', backgroundColor: 'orange' },
-    { date: '2025-03-11', display: 'background', backgroundColor: 'black' },
-  ]);
+  const linkStyle =
+    'px-3 py-2 mr-2 rounded-lg text-gray-500 hover:bg-primary hover:text-white border';
+  const activeLinkStyle = 'text-primary';
 
-  // TODO: 일정, 할일, 일기 카테고리 설정에 따라 각 상세 페이지로 향하는 기능 추가 예정
   const handleDayCellClick = (e) => {
     navigate(`/day/${e.dateStr}/${category}`);
   };
@@ -77,7 +67,7 @@ export default function Calendar() {
       <FullCalendar
         plugins={[dayGridPlugin, interactionPlugin]}
         initialView="dayGridMonth"
-        events={tempEventList}
+        events={eventList}
         dateClick={handleDayCellClick}
         showNonCurrentDates={false}
         firstDay={1}
@@ -90,6 +80,45 @@ export default function Calendar() {
           }
 
           return str;
+        }}
+        datesSet={async (dateInfo) => {
+          setEventList(() => []);
+
+          const year = dateInfo.start.getFullYear();
+          const month = dateInfo.start.getMonth() + 1;
+
+          try {
+            const response = await mockApi.getMonthlySchedules(
+              `${year}-${month.toString().padStart(2, '0')}`,
+            );
+
+            const addDataArray = [];
+            response.data.forEach((data) => {
+              const addDataObject = { date: data.day, display: 'background' };
+              let color;
+              if (data.count < 3) {
+                color = '#AAFFAA';
+              } else if (data.count < 6) {
+                color = '#55FF55';
+              } else if (data.count < 9) {
+                color = '#00FF00';
+              } else if (data.count < 12) {
+                color = '#00BB00';
+              } else if (data.count < 15) {
+                color = '#007700';
+              } else {
+                color = '#003300';
+              }
+
+              addDataObject.backgroundColor = color;
+
+              addDataArray.push(addDataObject);
+            });
+
+            setEventList(() => addDataArray);
+          } catch (error) {
+            console.log(error);
+          }
         }}
         titleFormat={(info) => `${info.date.year}년  ${info.date.month + 1}월`}
         headerToolbar={{
