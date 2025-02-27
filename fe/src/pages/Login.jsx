@@ -16,6 +16,8 @@ export default function Login() {
 
   const handleFormInput = async (e) => {
     const { name, value } = e.target;
+
+    
     setFormData((prev) => ({
       ...prev,
       [name]: value,
@@ -27,7 +29,7 @@ export default function Login() {
     setError('');
     setIsLoading(true);
 
-    try {
+    try {      
       const response = await authApi.login(formData);
       const data = response.data;
 
