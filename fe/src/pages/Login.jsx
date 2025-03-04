@@ -3,6 +3,7 @@ import authApi from '../api/authApi';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { login } from '../store/slices/authSlice';
+import SocialLogin from '../components/SocialLogin';
 
 export default function Login() {
   const [formData, setFormData] = useState({
@@ -99,7 +100,7 @@ export default function Login() {
           <p className="text-red-600 text-[15px] mb-8">{error && <div>{error}</div>}</p>
 
           <button
-            className={`w-full py-2 px-4 ${isFormValid ? 'bg-primary' : 'bg-gray-200'}
+            className={`w-full py-2 px-4 ${isFormValid ? 'bg-primary' : 'bg-gray-200'} mb-3
             ${isFormValid ? 'text-white' : 'text-gray-200'} text-gray-500 rounded-md text-base
             ${isFormValid ? 'hover:bg-secondary' : ''} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary mb-1
             ${isFormValid ? 'cursor-pointer' : 'cursor-not-allowed'}`}
@@ -111,6 +112,7 @@ export default function Login() {
             {isLoading ? '처리 중' : '로그인'}
           </button>
         </form>
+        <SocialLogin></SocialLogin>
         <button
           className="w-full mt-2 py-2 px-4 bg-white text-gray-600 rounded-md text-base cursor-pointer mb-10"
           onClick={toSignup}
