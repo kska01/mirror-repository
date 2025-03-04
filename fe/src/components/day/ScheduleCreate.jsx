@@ -41,7 +41,7 @@ export default function ScheduleCreate() {
   // }, [isLoading]);
 
   return (
-    <div className="flex flex-col items-center gap-15 mt-30">
+    <div className="flex flex-col items-center gap-15 mt-15">
       <h1 className="text-4xl font-semibold min-w-max">
         일정을 만들어 보세요.
       </h1>
@@ -68,7 +68,7 @@ export default function ScheduleCreate() {
             onChange={handleChange}
             onFocus={(e) => e.target.showPicker()}
           />
-        <button className='px-3 py-2 w-15 mt-15 rounded-lg border-black text-primary hover:bg-secondary hover:text-white border self-end'>{isLoading ? '생성중' : '생성'}</button>
+        <button className='px-3 py-2 w-15 mt-15 rounded-lg border-black text-primary hover:bg-primary hover:text-white border self-end'>{isLoading ? '생성중' : '생성'}</button>
       </form>
     </div>
   );

@@ -19,7 +19,9 @@ export default function Day() {
   return (
     <>
       <DayHeader />
-      <Outlet />
+      {/* <div className="h-150 overflow-y-auto mb-40"> */}
+        <Outlet />
+      {/* </div> */}
     </>
-  )
+  );
 }
