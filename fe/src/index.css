@@ -16,13 +16,23 @@
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-
-  --fc-today-bg-color: #2799c3;
 }
 
 @theme {
   --color-primary: #2799c3;
   --color-secondary: #2182a7;
+}
+
+.fc-day-today {
+  border-width: 6px !important;
+  border-style: solid !important;
+  border-color: #2799c3 !important;
+  cursor: pointer;
+}
+
+.fc-day-past,
+.fc-day-future {
+  cursor: pointer;
 }
 
 /* 웹킷 브라우저(Chrome, Edge, Safari)용 스크롤바 스타일 */
