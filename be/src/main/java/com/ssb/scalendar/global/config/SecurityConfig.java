@@ -3,6 +3,8 @@ package com.ssb.scalendar.global.config;
 import com.ssb.scalendar.global.security.handler.CustomAccessDeniedHandler;
 import com.ssb.scalendar.global.security.handler.JwtAuthenticationEntryPoint;
 import com.ssb.scalendar.global.security.jwt.JwtAuthenticationFilter;
+import com.ssb.scalendar.kakao.CustomOAuth2UserService;
+import com.ssb.scalendar.kakao.OAuth2SuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -30,6 +32,8 @@ public class SecurityConfig {
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2SuccessHandler oAuth2SuccessHandler;
 
     @Value("${origin}")
     private String origin;
@@ -49,7 +53,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/verify").authenticated()
                         .requestMatchers("/auth/**", "/error", "/images/**").permitAll()
+                        .requestMatchers("/oauth2/**", "/login/oauth2/code/**").permitAll() //OAuth2 요청 허용
+                        .requestMatchers("/login/oauth2/").permitAll() //OAuth2 요청 허용
                         .anyRequest().authenticated()
+                )
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/login")  // 추가
+                        .authorizationEndpoint(endpoint ->
+                                endpoint.baseUri("/oauth2/authorization") // 추가
+                        )
+                        .redirectionEndpoint(endpoint ->
+                                endpoint.baseUri("/login/oauth2/code/*") // 추가
+                        )
+                        .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+                        .successHandler(oAuth2SuccessHandler)
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .exceptionHandling(exception -> exception
