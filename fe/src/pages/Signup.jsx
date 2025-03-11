@@ -13,6 +13,7 @@ export default function Signup() {
 
   const [error, setError] = useState('');
 
+  
   /**
    * nickname
    *
